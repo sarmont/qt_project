@@ -17,6 +17,7 @@ class MyWidget(QMainWindow):
         self.buttonGroup.buttonClicked.connect(self.complexity_change)
 
 
+
     def complexity_change(self):
         radio = self.sender()
         indexOfChecked = [radio.buttons()[x].isChecked() for x in
@@ -30,6 +31,7 @@ class MyWidget(QMainWindow):
 
     def create_fild(self, complexity):
         self.deleteAll()
+        self.start_text.isVisible = False
 
         n = -1
         if complexity == 0:

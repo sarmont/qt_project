@@ -14,6 +14,9 @@ class MyWidget(QMainWindow):
         self.images = os.listdir("images")
         random.shuffle(self.images)
         self.buttonGroup.buttonClicked.connect(self.complexity_change)
+        self.result_fild = []
+        self.buttons_on_fild = []
+        self.my_images = []
 
     def complexity_change(self):
         radio = self.sender()
@@ -40,19 +43,29 @@ class MyWidget(QMainWindow):
         elif complexity == 2:
             n = 8
 
-        my_images = self.images[:n * 2]
-        my_images = my_images + my_images
-        random.shuffle(my_images)
+        self.my_images = self.images[:n * 2]
+        self.my_images = self.my_images + self.my_images
+        random.shuffle(self.my_images)
 
         positions = [(i, j) for i in range(n) for j in range(n)]
         for position in positions:
             button = QPushButton(self)
             button.setFixedWidth(button_size)
             button.setFixedHeight(button_size)
-
-            button.setIcon(QIcon(f"images/{my_images.pop()}"))
-            button.setIconSize(QSize(50, 50))
+            # self.element = my_images.pop()
+            # button.setIcon(QIcon(f"images/{element}"))
+            # self.result_fild.append(element)
+            self.buttons_on_fild.append(button)
+            button.clicked.connect(self.click_fild_button)
             self.grid.addWidget(button, *position)
+
+    def click_fild_button(self):
+        clicked_button = self.sender()
+        if clicked_button in self.buttons_on_fild:
+            button_index = self.buttons_on_fild.index(clicked_button)
+            print(button_index)
+            clicked_button.setIcon(QIcon(f"images/{self.my_images[button_index + 1]}"))
+            clicked_button.setIconSize(QSize(50, 50))
 
     def deleteAll(self):
         while self.grid.count():

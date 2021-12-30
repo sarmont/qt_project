@@ -1,11 +1,20 @@
 import sys
 import os
 from PyQt5 import uic  # Импортируем uic
-from PyQt5.QtWidgets import QApplication, QMainWindow, QPushButton, QRadioButton
+from PyQt5.QtWidgets import QWidget, QApplication, QMainWindow, QPushButton, QRadioButton
 from PyQt5.QtGui import QIcon
 from PyQt5.QtCore import QSize
 import random
 
+class FildButton(QPushButton):
+    def __init__(self, image, index):
+        super().__init__()
+        self.button_size = 60
+        self.isClicked = False
+        self.image = image
+        self.index = index
+        self.setFixedWidth(self.button_size)
+        self.setFixedHeight(self.button_size)
 
 class MyWidget(QMainWindow):
     def __init__(self):
@@ -17,6 +26,7 @@ class MyWidget(QMainWindow):
         self.result_fild = []
         self.buttons_on_fild = []
         self.my_images = []
+
 
     def complexity_change(self):
         radio = self.sender()
@@ -32,7 +42,7 @@ class MyWidget(QMainWindow):
     def create_fild(self, complexity):
         self.deleteAll()
 
-        button_size = 60
+
         n = -1
         if complexity == 0:
             n = 4
@@ -49,15 +59,17 @@ class MyWidget(QMainWindow):
 
         positions = [(i, j) for i in range(n) for j in range(n)]
         for position in positions:
-            button = QPushButton(self)
-            button.setFixedWidth(button_size)
-            button.setFixedHeight(button_size)
+
+
             # self.element = my_images.pop()
             # button.setIcon(QIcon(f"images/{element}"))
             # self.result_fild.append(element)
+            index =  position[0] * n + position[1]
+            button = FildButton(self.my_images[index], index)
             self.buttons_on_fild.append(button)
             button.clicked.connect(self.click_fild_button)
             self.grid.addWidget(button, *position)
+        print(self.buttons_on_fild)
 
     def click_fild_button(self):
         clicked_button = self.sender()

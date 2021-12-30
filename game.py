@@ -2,7 +2,7 @@ import sys
 import os
 
 from PyQt5 import uic  # Импортируем uic
-from PyQt5.QtWidgets import QWidget, QApplication, QMainWindow, QPushButton, QRadioButton
+from PyQt5.QtWidgets import  QApplication, QMainWindow, QPushButton
 from PyQt5.QtGui import QIcon
 from PyQt5.QtCore import QSize, QTimer
 import random
@@ -25,13 +25,18 @@ class MyWidget(QMainWindow):
         super().__init__()
         uic.loadUi('UI.ui', self)  # Загружаем дизайн
         self.images = os.listdir("images")
-        random.shuffle(self.images)
+        self.timer = QTimer()
         self.buttonGroup.buttonClicked.connect(self.complexity_change)
+        self.start_position()
+        print(self.images)
+
+    def start_position(self):
+        random.shuffle(self.images)
         self.result_fild = []
         self.buttons_on_fild = []
         self.my_images = []
         self.click_counter = 0
-        self.timer = QTimer()
+
 
     def complexity_change(self):
         radio = self.sender()
@@ -57,7 +62,7 @@ class MyWidget(QMainWindow):
         elif complexity == 2:
             n = 8
 
-        self.my_images = self.images[:n * 2]
+        self.my_images = self.images[:n ** 2 // 2]
         self.my_images = self.my_images + self.my_images
         random.shuffle(self.my_images)
 
@@ -102,6 +107,7 @@ class MyWidget(QMainWindow):
             item = self.grid.takeAt(0)
             widget = item.widget()
             widget.deleteLater()
+        self.start_position()
 
 
 if __name__ == '__main__':

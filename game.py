@@ -1,10 +1,12 @@
 import sys
 import os
+import time
 from PyQt5 import uic  # Импортируем uic
 from PyQt5.QtWidgets import QWidget, QApplication, QMainWindow, QPushButton, QRadioButton
 from PyQt5.QtGui import QIcon
 from PyQt5.QtCore import QSize
 import random
+
 
 class FildButton(QPushButton):
     def __init__(self, image, index):
@@ -15,6 +17,8 @@ class FildButton(QPushButton):
         self.index = index
         self.setFixedWidth(self.button_size)
         self.setFixedHeight(self.button_size)
+        self.opened = False
+
 
 class MyWidget(QMainWindow):
     def __init__(self):
@@ -26,7 +30,7 @@ class MyWidget(QMainWindow):
         self.result_fild = []
         self.buttons_on_fild = []
         self.my_images = []
-
+        self.click_counter = 0
 
     def complexity_change(self):
         radio = self.sender()
@@ -41,7 +45,6 @@ class MyWidget(QMainWindow):
 
     def create_fild(self, complexity):
         self.deleteAll()
-
 
         n = -1
         if complexity == 0:
@@ -59,25 +62,38 @@ class MyWidget(QMainWindow):
 
         positions = [(i, j) for i in range(n) for j in range(n)]
         for position in positions:
-
-
             # self.element = my_images.pop()
             # button.setIcon(QIcon(f"images/{element}"))
             # self.result_fild.append(element)
-            index =  position[0] * n + position[1]
+            index = position[0] * n + position[1]
             button = FildButton(self.my_images[index], index)
+
             self.buttons_on_fild.append(button)
             button.clicked.connect(self.click_fild_button)
             self.grid.addWidget(button, *position)
-        print(self.buttons_on_fild)
+        print(list(self.buttons_on_fild))
 
-    def click_fild_button(self):
+    def click_fild_button(self, n):
         clicked_button = self.sender()
-        if clicked_button in self.buttons_on_fild:
-            button_index = self.buttons_on_fild.index(clicked_button)
-            print(button_index)
-            clicked_button.setIcon(QIcon(f"images/{self.my_images[button_index + 1]}"))
+        self.click_counter += 1
+        if clicked_button.isClicked is False and clicked_button.opened is False:
+            clicked_button.isClicked = True
+            clicked_button.setIcon(QIcon(f"images/{(clicked_button.index) % 8 + 1}"))
             clicked_button.setIconSize(QSize(50, 50))
+        # print([el.isClicked for el in self.buttons_on_fild])
+
+        if self.click_counter % 2 == 0:
+            btn1, btn2 = [el for el in self.buttons_on_fild if el.isClicked is True and not el.opened]
+            print(btn2.image, btn1.image)
+            if btn1.image == btn2.image:
+                btn1.opened = True
+                btn2.opened = True
+            else:
+                time.sleep(2)
+                btn1.isClicked = False
+                btn2.isClicked = False
+                btn1.setIcon(QIcon())
+                btn2.setIcon(QIcon())
 
     def deleteAll(self):
         while self.grid.count():

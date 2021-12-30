@@ -16,6 +16,7 @@ class MyWidget(QMainWindow):
                       '0', '.', '=', '+']
         self.buttonGroup.buttonClicked.connect(self.complexity_change)
 
+
     def complexity_change(self):
         radio = self.sender()
         indexOfChecked = [radio.buttons()[x].isChecked() for x in
@@ -28,21 +29,24 @@ class MyWidget(QMainWindow):
             self.create_fild(2)
 
     def create_fild(self, complexity):
-
         self.deleteAll()
 
         n = -1
         if complexity == 0:
             n = 4
+            button_size = 60
         elif complexity == 1:
             n = 6
+            button_size = 60
         elif complexity == 2:
             n = 8
+            button_size = 60
 
         positions = [(i, j) for i in range(n) for j in range(n)]
         for position in positions:
             button = QPushButton('text')
-
+            button.setFixedWidth(button_size)
+            button.setFixedHeight(button_size)
             self.grid.addWidget(button, *position)
 
     def deleteAll(self):

@@ -28,6 +28,9 @@ class MyWidget(QMainWindow):
             self.create_fild(2)
 
     def create_fild(self, complexity):
+
+        self.deleteAll()
+
         n = -1
         if complexity == 0:
             n = 4
@@ -36,12 +39,17 @@ class MyWidget(QMainWindow):
         elif complexity == 2:
             n = 8
 
-
         positions = [(i, j) for i in range(n) for j in range(n)]
-
         for position in positions:
             button = QPushButton('text')
+
             self.grid.addWidget(button, *position)
+
+    def deleteAll(self):
+        while self.grid.count():
+            item = self.grid.takeAt(0)
+            widget = item.widget()
+            widget.deleteLater()
 
 
 if __name__ == '__main__':

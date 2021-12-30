@@ -1,10 +1,10 @@
 import sys
 import os
-import time
+
 from PyQt5 import uic  # Импортируем uic
 from PyQt5.QtWidgets import QWidget, QApplication, QMainWindow, QPushButton, QRadioButton
 from PyQt5.QtGui import QIcon
-from PyQt5.QtCore import QSize
+from PyQt5.QtCore import QSize, QTimer
 import random
 
 
@@ -31,6 +31,7 @@ class MyWidget(QMainWindow):
         self.buttons_on_fild = []
         self.my_images = []
         self.click_counter = 0
+        self.timer = QTimer()
 
     def complexity_change(self):
         radio = self.sender()
@@ -78,18 +79,19 @@ class MyWidget(QMainWindow):
         self.click_counter += 1
         if clicked_button.isClicked is False and clicked_button.opened is False:
             clicked_button.isClicked = True
-            clicked_button.setIcon(QIcon(f"images/{(clicked_button.index) % 8 + 1}"))
+            clicked_button.setIcon(QIcon(f"images/{clicked_button.image}"))
             clicked_button.setIconSize(QSize(50, 50))
         # print([el.isClicked for el in self.buttons_on_fild])
-
         if self.click_counter % 2 == 0:
+            self.timer.singleShot(2000, self.check_similar)
+
+    def check_similar(self):
             btn1, btn2 = [el for el in self.buttons_on_fild if el.isClicked is True and not el.opened]
             print(btn2.image, btn1.image)
             if btn1.image == btn2.image:
                 btn1.opened = True
                 btn2.opened = True
             else:
-                time.sleep(2)
                 btn1.isClicked = False
                 btn2.isClicked = False
                 btn1.setIcon(QIcon())

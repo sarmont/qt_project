@@ -1,14 +1,16 @@
 import sys
-
+import os
 from PyQt5 import uic  # Импортируем uic
 from PyQt5.QtWidgets import QApplication, QMainWindow, QPushButton, QRadioButton
-
+from PyQt5.QtGui import QIcon
+from PyQt5.QtCore import QSize
 
 class MyWidget(QMainWindow):
     def __init__(self):
         super().__init__()
         uic.loadUi('UI.ui', self)  # Загружаем дизайн
-
+        self.images = os.listdir("images")
+        print(self.images)
         self.names = ['Cls', 'Bck', '', 'Close',
                       '7', '8', '9', '/',
                       '4', '5', '6', '*',
@@ -32,23 +34,25 @@ class MyWidget(QMainWindow):
     def create_fild(self, complexity):
         self.deleteAll()
         self.start_text.isVisible = False
-
+        button_size = 60
         n = -1
         if complexity == 0:
             n = 4
-            button_size = 60
+
         elif complexity == 1:
             n = 6
-            button_size = 60
+
         elif complexity == 2:
             n = 8
-            button_size = 60
+
 
         positions = [(i, j) for i in range(n) for j in range(n)]
         for position in positions:
-            button = QPushButton('text')
+            button = QPushButton(self)
             button.setFixedWidth(button_size)
             button.setFixedHeight(button_size)
+            button.setIcon(QIcon(f"images/{self.images[position[0]]}"))
+            button.setIconSize(QSize(50, 50))
             self.grid.addWidget(button, *position)
 
     def deleteAll(self):

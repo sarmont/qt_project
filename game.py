@@ -2,7 +2,7 @@ import sys
 import os
 
 from PyQt5 import uic  # Импортируем uic
-from PyQt5.QtWidgets import  QApplication, QMainWindow, QPushButton
+from PyQt5.QtWidgets import QApplication, QMainWindow, QPushButton
 from PyQt5.QtGui import QIcon
 from PyQt5.QtCore import QSize, QTimer
 import random
@@ -29,6 +29,7 @@ class MyWidget(QMainWindow):
         self.buttonGroup.buttonClicked.connect(self.complexity_change)
         self.start_position()
         print(self.images)
+        self.progressBar.setValue(0)
 
     def start_position(self):
         random.shuffle(self.images)
@@ -36,7 +37,8 @@ class MyWidget(QMainWindow):
         self.buttons_on_fild = []
         self.my_images = []
         self.click_counter = 0
-
+        self.attempts = 0
+        self.opened = 0
 
     def complexity_change(self):
         radio = self.sender()
@@ -91,16 +93,23 @@ class MyWidget(QMainWindow):
             self.timer.singleShot(2000, self.check_similar)
 
     def check_similar(self):
-            btn1, btn2 = [el for el in self.buttons_on_fild if el.isClicked is True and not el.opened]
-            print(btn2.image, btn1.image)
-            if btn1.image == btn2.image:
-                btn1.opened = True
-                btn2.opened = True
-            else:
-                btn1.isClicked = False
-                btn2.isClicked = False
-                btn1.setIcon(QIcon())
-                btn2.setIcon(QIcon())
+        self.attempts += 1
+        self.attempts_counter.setText(str(self.attempts))
+        btn1, btn2 = [el for el in self.buttons_on_fild if el.isClicked is True and not el.opened]
+        print(btn2.image, btn1.image)
+
+        if btn1.image == btn2.image:
+            btn1.opened = True
+            btn2.opened = True
+            self.opened += 1
+            self.opened_images_pair.setText(
+                f"Открыто пар картинок: {str(self.opened)} из {str(len(self.buttons_on_fild) // 2)}")
+            self.progressBar.setValue(int(self.opened // (len(self.buttons_on_fild) // 2) * 100))
+        else:
+            btn1.isClicked = False
+            btn2.isClicked = False
+            btn1.setIcon(QIcon())
+            btn2.setIcon(QIcon())
 
     def deleteAll(self):
         while self.grid.count():
@@ -108,6 +117,9 @@ class MyWidget(QMainWindow):
             widget = item.widget()
             widget.deleteLater()
         self.start_position()
+
+    def is_finish_situation(self):
+        pass
 
 
 if __name__ == '__main__':
